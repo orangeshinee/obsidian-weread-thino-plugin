@@ -6,6 +6,7 @@ import { frontMatterDocType, buildFrontMatter } from './utils/frontmatter';
 import { get } from 'svelte/store';
 import { settingsStore } from './settings';
 import { getLinesInString } from './utils/fileUtils';
+import * as nunjucks from 'nunjucks';
 
 export default class FileManager {
 	private vault: Vault;
@@ -35,16 +36,20 @@ export default class FileManager {
 	}
 
 	private buildAppendContent(dailyNoteRefs: DailyNoteReferenece[]): string {
+		const rawCustomTag = get(settingsStore).customTag;
 		const appendContent = dailyNoteRefs
 			.map((dailyNoteRef) => {
-				// 修改写入日记的格式，适配Thino
-				// 格式为：- 12:00:00 ![[bookId#^refBlockId]]
+				const metaData = dailyNoteRef.metaData;
+				// 支持nunjucks模板渲染customTag
+				const customTag = rawCustomTag
+					? nunjucks.renderString(rawCustomTag, { metaData })
+					: '';
 				const blockList = dailyNoteRef.refBlocks.map((refBlock) => {
 					const createTime = refBlock.createTime * 1000;
 					const createDate = window.moment(createTime).format('HH:mm:ss');
-					return `- ${createDate} ![[${this.getFileName(dailyNoteRef.metaData)}#^${
-						refBlock.refBlockId
-					}]]`;
+					return `- ${createDate} ${
+						customTag ? ' ' + customTag : ''
+					} ![[${this.getFileName(metaData)}#^${refBlock.refBlockId}]]`;
 				});
 				const bodyContent = blockList.join('\n');
 				return bodyContent;

@@ -44,10 +44,11 @@ export class Renderer {
 	render(entry: Notebook): string {
 		const { metaData, chapterHighlights, bookReview } = entry;
 
-		const context: RenderTemplate = {
+		const context: RenderTemplate & { customTag: string } = {
 			metaData,
 			chapterHighlights,
-			bookReview
+			bookReview,
+			customTag: get(settingsStore).customTag
 		};
 		const settings = get(settingsStore);
 		const template = settings.template;
