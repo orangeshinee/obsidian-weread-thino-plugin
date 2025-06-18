@@ -235,6 +235,7 @@ export const parseChapterResp = (
 	return [];
 };
 
+// 解析每日笔记引用
 export const parseDailyNoteReferences = (notebooks: Notebook[]): DailyNoteReferenece[] => {
 	const today = window.moment().format('YYYYMMDD');
 	const todayHighlightBlocks: DailyNoteReferenece[] = [];
@@ -246,12 +247,29 @@ export const parseDailyNoteReferences = (notebooks: Notebook[]): DailyNoteRefere
 				const createTime = window.moment(highlight.created * 1000).format('YYYYMMDD');
 				return today === createTime;
 			});
+		// 提取序章笔记（如果存在）
+		const bookReview = notebook.bookReview;
+		const chapterReviews = (bookReview.chapterReviews || [])
+			.flatMap((chapterReview) => chapterReview.reviews || [])
+			.filter((review) => {
+				const createTime = window.moment(review.created * 1000).format('YYYYMMDD');
+				return today === createTime;
+			});
+
 		const refBlocks: RefBlockDetail[] = [];
 		if (todayHighlights) {
 			for (const highlight of todayHighlights) {
 				refBlocks.push({
 					refBlockId: highlight.bookmarkId,
 					createTime: highlight.created
+				});
+			}
+		}
+		if (chapterReviews) {
+			for (const review of chapterReviews) {
+				refBlocks.push({
+					refBlockId: review.reviewId,
+					createTime: review.created
 				});
 			}
 		}

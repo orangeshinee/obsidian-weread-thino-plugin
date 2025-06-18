@@ -37,17 +37,17 @@ export default class FileManager {
 	private buildAppendContent(dailyNoteRefs: DailyNoteReferenece[]): string {
 		const appendContent = dailyNoteRefs
 			.map((dailyNoteRef) => {
-				const headContent: string = '\n### '
-					.concat(dailyNoteRef.metaData.title)
-					.concat('\n');
+				// 修改写入日记的格式，适配Thino
+				// 格式为：- 12:00:00 ![[bookId#^refBlockId]]
 				const blockList = dailyNoteRef.refBlocks.map((refBlock) => {
-					return `![[${this.getFileName(dailyNoteRef.metaData)}#^${
+					const createTime = refBlock.createTime * 1000;
+					const createDate = window.moment(createTime).format('HH:mm:ss');
+					return `- ${createDate} ![[${this.getFileName(dailyNoteRef.metaData)}#^${
 						refBlock.refBlockId
 					}]]`;
 				});
 				const bodyContent = blockList.join('\n');
-				const finalContent = headContent + bodyContent;
-				return finalContent;
+				return bodyContent;
 			})
 			.join('\n');
 
