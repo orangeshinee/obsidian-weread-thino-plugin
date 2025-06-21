@@ -11,6 +11,9 @@
 Obsidian微信读书插件是一个社区插件，用来同步微信读书中书籍 `元信息`、`高亮标注`，`划线感想`、`书评`等，并将这些信息转换为markdown格式保存到Obsidian的文件夹中，初次使用，如果笔记数量较多，更新会比较慢，后面再去更新的时候只会更新 `划线数量`或者 `笔记数量`有变化的书籍，一般速度很快。
 
 ## 更新功能
+- 主要修改了将读书笔记同步至日记的部分，自定义推送格式，用于适配[Thino](https://pkmer.cn/products/thino/)的Memos；
+- 如果日记不存在，可以自动创建，并选择对应的日记模板；
+- 如果你是Thino的Pro会员，可以参考[这个例子](https://github.com/Quorafind/Obsidian-Thino/discussions/532)直接进行修改，不用单独使用此插件。
 
 - 2025-06
   - 主要修改了将读书笔记同步至日历的部分，自定义推送格式，用于适配[Thino](https://pkmer.cn/products/thino/)的Memos；
