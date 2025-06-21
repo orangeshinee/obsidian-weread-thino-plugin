@@ -66,6 +66,10 @@ export class WereadSettingsTab extends PluginSettingTab {
 			this.dailyNotesFolder();
 			this.dailyNoteFormat();
 			this.insertAfter();
+			this.autoCreateDailyNote();
+			if (get(settingsStore).autoCreateDailyNote) {
+				this.dailyNoteTemplate();
+			}
 		}
 		this.customTagSetting();
 		this.template();
@@ -175,6 +179,55 @@ export class WereadSettingsTab extends PluginSettingTab {
 					console.debug('set daily notes toggle to', value);
 					settingsStore.actions.setDailyNotesToggle(value);
 					this.display();
+				});
+			});
+	}
+
+	private autoCreateDailyNote(): void {
+		new Setting(this.containerEl)
+			.setName('自动创建Daily Note')
+			.setDesc('当Daily Note不存在时自动创建')
+			.addToggle((toggle) => {
+				return toggle.setValue(get(settingsStore).autoCreateDailyNote).onChange((value) => {
+					settingsStore.actions.setAutoCreateDailyNote(value);
+				});
+			});
+	}
+
+	private dailyNoteTemplate(): void {
+		new Setting(this.containerEl)
+			.setName('日记模板')
+			.setDesc('为自动创建的Daily Note选择模板文件(输入路径或文件名)')
+			.addText((text) => {
+				const allFiles = this.app.vault.getMarkdownFiles().map((f) => f.path);
+				let currentValue = get(settingsStore).dailyNoteTemplatePath || '';
+
+				text.inputEl.style.width = '60%';
+				text.inputEl.style.height = '30px';
+				text.setValue(currentValue).onChange(async (value) => {
+					currentValue = value;
+					settingsStore.actions.setDailyNoteTemplatePath(value);
+				});
+
+				// 创建联想下拉框
+				const datalist = document.createElement('datalist');
+				datalist.id = 'template-suggestions';
+				text.inputEl.setAttribute('list', 'template-suggestions');
+				text.inputEl.after(datalist);
+
+				// 动态更新联想列表
+				text.inputEl.addEventListener('input', () => {
+					const input = text.inputEl.value.toLowerCase();
+					const filtered = allFiles
+						.filter((f) => f.toLowerCase().includes(input))
+						.slice(0, 10); // 限制显示数量
+
+					datalist.innerHTML = '';
+					filtered.forEach((file) => {
+						const option = document.createElement('option');
+						option.value = file;
+						datalist.appendChild(option);
+					});
 				});
 			});
 	}
