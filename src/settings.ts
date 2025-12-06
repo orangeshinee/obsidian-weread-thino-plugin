@@ -36,9 +36,6 @@ interface WereadPluginSettings {
 		uuid: string;
 		password: string;
 	};
-	customTag: string;
-	autoCreateDailyNote: boolean;
-	dailyNoteTemplatePath: string;
 }
 
 const DEFAULT_SETTINGS: WereadPluginSettings = {
@@ -67,15 +64,13 @@ const DEFAULT_SETTINGS: WereadPluginSettings = {
 	saveArticleToggle: true,
 	saveReadingInfoToggle: true,
 	customTag: '',
-	autoCreateDailyNote: false	trimBlocks: false,
+	autoCreateDailyNote: false,
+	trimBlocks: false,
 	cookieCloudInfo: {
 		serverUrl: '',
 		uuid: '',
-		password: '',
-	},
-	autoCreateDailyNote: false,
-	customTag: '',
-	dailyNoteTemplatePath: ''
+		password: ''
+	}
 };
 
 const createSettingsStore = () => {
@@ -313,28 +308,6 @@ const createSettingsStore = () => {
 		});
 	};
 
-
-	const setCustomTag = (customTag: string) => {
-		store.update((state) => {
-			state.customTag = customTag;
-			return state;
-		});
-	};
-
-	const setAutoCreateDailyNote = (autoCreateDailyNote: boolean) => {
-		store.update((state) => {
-			state.autoCreateDailyNote = autoCreateDailyNote;
-			return state;
-		});
-	};
-
-	const setDailyNoteTemplatePath = (templatePath: string) => {
-		store.update((state) => {
-			state.dailyNoteTemplatePath = templatePath;
-			return state;
-		});
-	};
-
 	return {
 		subscribe: store.subscribe,
 		initialise,
@@ -362,9 +335,6 @@ const createSettingsStore = () => {
 			setCookieCloudInfo,
 			setCustomTag,
 			setTrimBlocks,
-			setAutoCreateDailyNote,
-			setDailyNoteTemplatePath
-			setCustomTag,
 			setAutoCreateDailyNote,
 			setDailyNoteTemplatePath
 		}

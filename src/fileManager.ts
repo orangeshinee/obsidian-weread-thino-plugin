@@ -116,32 +116,28 @@ export default class FileManager {
 			new Notice(`没有在Daily Note中找到区间开始：${targetString}！请检查Daily Notes设置`);
 			throw new Error('cannot find ' + targetString);
 		}
-		
+
 		// Check for duplicate content by checking block references
-		const newLines = formatted.split('\n').filter(line => line.trim());
+		const newLines = formatted.split('\n').filter((line) => line.trim());
 		const existingLines = fileContent.split('\n');
-		
+
 		// Filter out lines that already exist by checking block reference IDs
-		const uniqueLines = newLines.filter(newLine => {
+		const uniqueLines = newLines.filter((newLine) => {
 			// Extract block reference ID from the line (format: ![[filename#^blockId]])
 			const blockRefMatch = newLine.match(/!\[\[.*?#\^(.*?)\]\]/);
 			if (blockRefMatch && blockRefMatch[1]) {
 				const blockId = blockRefMatch[1];
 				// Check if this block ID already exists in the file
-				return !existingLines.some(existingLine => 
-					existingLine.includes(`#^${blockId}`)
-				);
+				return !existingLines.some((existingLine) => existingLine.includes(`#^${blockId}`));
 			}
 			// For lines without block references, check exact match
-			return !existingLines.some(existingLine => 
-				existingLine.trim() === newLine.trim()
-			);
+			return !existingLines.some((existingLine) => existingLine.trim() === newLine.trim());
 		});
-		
+
 		if (uniqueLines.length === 0) {
 			return fileContent; // Skip if all content already exists
 		}
-		
+
 		return this.insertTextAfterPosition(uniqueLines.join('\n'), fileContent, targetPosition);
 	}
 
