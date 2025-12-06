@@ -27,6 +27,9 @@ interface WereadPluginSettings {
 	convertTags: boolean;
 	saveArticleToggle: boolean;
 	saveReadingInfoToggle: boolean;
+	customTag: string;
+	autoCreateDailyNote: boolean;
+	dailyNoteTemplatePath: string;
 	trimBlocks: boolean;
 	cookieCloudInfo: {
 		serverUrl: string;
@@ -51,6 +54,7 @@ const DEFAULT_SETTINGS: WereadPluginSettings = {
 	user: '',
 	userVid: '',
 	template: notebookTemolate,
+	dailyNoteTemplatePath: '',
 	noteCountLimit: -1,
 	subFolderType: '-1',
 	fileNameType: 'BOOK_NAME',
@@ -62,7 +66,8 @@ const DEFAULT_SETTINGS: WereadPluginSettings = {
 	convertTags: false,
 	saveArticleToggle: true,
 	saveReadingInfoToggle: true,
-	trimBlocks: false,
+	customTag: '',
+	autoCreateDailyNote: false	trimBlocks: false,
 	cookieCloudInfo: {
 		serverUrl: '',
 		uuid: '',
@@ -308,6 +313,28 @@ const createSettingsStore = () => {
 		});
 	};
 
+
+	const setCustomTag = (customTag: string) => {
+		store.update((state) => {
+			state.customTag = customTag;
+			return state;
+		});
+	};
+
+	const setAutoCreateDailyNote = (autoCreateDailyNote: boolean) => {
+		store.update((state) => {
+			state.autoCreateDailyNote = autoCreateDailyNote;
+			return state;
+		});
+	};
+
+	const setDailyNoteTemplatePath = (templatePath: string) => {
+		store.update((state) => {
+			state.dailyNoteTemplatePath = templatePath;
+			return state;
+		});
+	};
+
 	return {
 		subscribe: store.subscribe,
 		initialise,
@@ -335,6 +362,9 @@ const createSettingsStore = () => {
 			setCookieCloudInfo,
 			setCustomTag,
 			setTrimBlocks,
+			setAutoCreateDailyNote,
+			setDailyNoteTemplatePath
+			setCustomTag,
 			setAutoCreateDailyNote,
 			setDailyNoteTemplatePath
 		}

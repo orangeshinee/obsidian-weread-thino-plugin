@@ -103,7 +103,7 @@ export class Renderer {
 	renderWithTemplate(templateStr: string, entry: Notebook, trimBlocks = false): string {
 		const { metaData, chapterHighlights, bookReview } = entry;
 
-		const context: RenderTemplate = {
+		const context: RenderTemplate & { customTag: string } = {
 			metaData,
 			chapterHighlights,
 			bookReview
