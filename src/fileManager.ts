@@ -189,6 +189,12 @@ export default class FileManager {
 			return {
 				file,
 				bookId: frontmatter['bookId'],
+				title: frontmatter['title'] ?? file.basename,
+				author: frontmatter['author'],
+				cover: frontmatter['cover'],
+				progress: frontmatter['progress'],
+				readingDate: frontmatter['readingDate'],
+				finishedDate: frontmatter['finishedDate'],
 				reviewCount: frontmatter['reviewCount'],
 				noteCount: frontmatter['noteCount'],
 				new: false
@@ -210,11 +216,31 @@ export default class FileManager {
 				({ file, frontmatter }): AnnotationFile => ({
 					file,
 					bookId: frontmatter['bookId'],
+					title: frontmatter['title'] ?? file.basename,
+					author: frontmatter['author'],
+					cover: frontmatter['cover'],
+					progress: frontmatter['progress'],
+					readingDate: frontmatter['readingDate'],
+					finishedDate: frontmatter['finishedDate'],
 					reviewCount: frontmatter['reviewCount'],
 					noteCount: frontmatter['noteCount'],
 					new: true
 				})
 			);
+	}
+
+	public async getNotebookFilesByBookId(): Promise<Map<string, AnnotationFile>> {
+		const files = await this.getNotebookFiles();
+		return files.reduce((map, file) => {
+			if (file.bookId) {
+				map.set(file.bookId, file);
+			}
+			return map;
+		}, new Map<string, AnnotationFile>());
+	}
+
+	public async deleteNotebookFile(file: TFile): Promise<void> {
+		await this.vault.delete(file);
 	}
 
 	private async getNewNotebookFilePath(notebook: Notebook): Promise<string> {
@@ -273,7 +299,7 @@ export default class FileManager {
 	private getSubFolderPath(metaData: Metadata): string {
 		const folderType = get(settingsStore).subFolderType;
 		if (folderType == 'title') {
-			return metaData.title;
+			return sanitizeTitle(metaData.title);
 		} else if (folderType == 'category') {
 			if (metaData.category) {
 				return metaData.category.split('-')[0];
